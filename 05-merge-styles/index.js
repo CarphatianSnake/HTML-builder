@@ -42,10 +42,16 @@ fs.readdir(
 
         if (filesArray.length - 1 === index) {
 
+          const newData = dataArray.join('');
+          const bundlePath = path.join(bundleFolder, 'bundle.css');
+
           fs.writeFile(
-            path.join(bundleFolder, 'bundle.css'),
-            dataArray.join(''),
-            isErrorMessage
+            bundlePath,
+            newData,
+            error => {
+              isErrorMessage(error);
+              console.log('Merging complete!');
+            }
           );
 
         }
