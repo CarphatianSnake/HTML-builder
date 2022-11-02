@@ -12,6 +12,7 @@ fs.readdir(
   folderPath,
   options,
   (error, files) => {
+    
     if (error) return console.error(error.message);
 
     files.forEach(file => {
