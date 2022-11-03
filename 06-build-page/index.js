@@ -1,8 +1,8 @@
 const path = require('path');
 const fs = require('fs');
 
-const mergeStyles = require(path.join(__dirname, '../05-merge-styles/mergeStyles'));
-const CopyDir = require(path.join(__dirname, '../04-copy-directory/CopyDir'));
+const mergeStyles = require(path.join(__dirname, '..', '05-merge-styles', 'mergeStyles'));
+const CopyDir = require(path.join(__dirname, '..', '04-copy-directory', 'CopyDir'));
 
 const cd = new CopyDir(__dirname, 'assets', path.join('project-dist', 'assets'));
 
@@ -11,7 +11,7 @@ const templatePath = path.join(__dirname, 'template.html');
 const componentsPath = path.join(__dirname, 'components');
 const stylesFolder = path.join(__dirname, 'styles');
 
-init();
+cd.init(projectDistPath);
 writeHTML();
 mergeStyles(stylesFolder, projectDistPath, 'style.css');
 cd.copy();
@@ -23,7 +23,7 @@ function writeHTML() {
     {encoding: 'utf8'},
     (error, data) => {
   
-      isErrorMessage(error);
+      cd.error(error);
   
       let template = data;
   
@@ -50,7 +50,9 @@ function writeHTML() {
             fs.writeFile(
               path.join(projectDistPath, 'index.html'),
               template,
-              isErrorMessage
+              error => {
+                cd.error(error);
+              }
             );
 
           }
@@ -63,18 +65,6 @@ function writeHTML() {
 
 }
 
-function init() {
-
-  fs.mkdir(
-    projectDistPath,
-    {recursive: true},
-    error => {
-      if (error) return console.error('Error:\n', error.message);
-    }
-  );
-
-}
-
 function isErrorMessage(error) {
-  if (error) return console.error(error.message);
+  if (error) return console.error('Error:\n', error.message);
 }

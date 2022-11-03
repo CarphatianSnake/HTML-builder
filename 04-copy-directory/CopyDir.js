@@ -127,7 +127,7 @@ module.exports = class CopyDir {
   }
 
   error(error) {
-    if (error) return console.error(error.message);
+    if (error) return console.error('Error\n', error.message);
   }
 
 }
