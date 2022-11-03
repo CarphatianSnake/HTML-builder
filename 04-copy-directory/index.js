@@ -1,22 +1,24 @@
 const path = require('path');
 const fs = require('fs');
 
-const filesPath = path.join(__dirname, 'files');
-const copyFilesPath = path.join(__dirname, 'files-copy');
-
 class CopyDir {
+  constructor(dirname, source, destination) {
+    this.dirname = dirname;
+    this.source = path.join(dirname, source);
+    this.destination = path.join(dirname, destination);
+  }
 
   init(path) {
 
     fs.mkdir(
       path,
       {recursive: true},
-      this.isErrorMessage
+      this.error
     );
   
   }
 
-  deleteFiles(sourceFiles, destination) {
+  delete(sourceFiles, destination) {
 
     fs.readdir(
       destination,
@@ -24,7 +26,7 @@ class CopyDir {
 
         if (copyFiles && copyFiles.length > 0) {
 
-          this.isErrorMessage(error);
+          this.error(error);
 
           let filesArray = copyFiles;
 
@@ -33,47 +35,81 @@ class CopyDir {
           });
 
           filesArray.forEach(file => {
-            fs.unlink(path.join(destination, file), this.isErrorMessage);
+            fs.unlink(path.join(destination, file), this.error);
           });
 
         }
-  
+
       }
     );
   
   }
 
-  copyFiles(source, destination) {
+  checkDir(folderMap) {
+
+    const files = [];
+    const folders = [];
+
+    folderMap.forEach(item => {
+
+      if (item.isFile()) {
+        files.push(item.name);
+      } else {
+        folders.push(item.name);
+      }
+
+    });
+
+    return { files, folders };
+
+  }
+
+  copy(source = this.source, destination = this.destination) {
 
     fs.readdir(
       source,
-      (error, sourceFiles) => {
+      {
+        encoding: 'utf-8',
+        withFileTypes: true
+      },
+      (error, sourceMap) => {
+
+        const { files, folders } = this.checkDir(sourceMap);
     
-        this.isErrorMessage(error);
+        this.error(error);
     
         this.init(destination);
     
-        this.deleteFiles(sourceFiles, destination);
+        this.delete(files, destination);
     
-        sourceFiles.forEach(file => {
+        files.forEach(file => {
           fs.copyFile(
             path.join(source, file),
             path.join(destination, file),
-            this.isErrorMessage
+            this.error
           );
         });
+
+        folders.forEach(folder => {
+
+          const src = path.join(source, folder);
+          const dest = path.join(destination, folder);
+
+          this.copy(src, dest);
+          
+        })
     
       }
     );
   
   }
 
-  isErrorMessage(error) {
+  error(error) {
     if (error) return console.error(error.message);
   }
 
 }
 
-const copyDir = new CopyDir();
+const copyDir = new CopyDir(__dirname, 'files', 'files-copy');
 
-copyDir.copyFiles(filesPath, copyFilesPath);
+copyDir.copy();
