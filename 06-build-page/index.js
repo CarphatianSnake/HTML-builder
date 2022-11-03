@@ -1,6 +1,10 @@
 const path = require('path');
 const fs = require('fs');
 
+const CopyDir = require(path.join(__dirname, '../04-copy-directory/CopyDir'));
+
+const cd = new CopyDir(__dirname, 'assets', path.join('project-dist', 'assets'));
+
 const projectDistPath = path.join(__dirname, 'project-dist');
 const templatePath = path.join(__dirname, 'template.html');
 const componentsPath = path.join(__dirname, 'components');
@@ -9,6 +13,7 @@ const stylesFolder = path.join(__dirname, 'styles');
 init();
 writeHTML();
 writeStyles();
+cd.copy();
 
 function writeHTML() {
 
