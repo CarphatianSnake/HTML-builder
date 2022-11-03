@@ -4,68 +4,76 @@ const fs = require('fs');
 const filesPath = path.join(__dirname, 'files');
 const copyFilesPath = path.join(__dirname, 'files-copy');
 
-copyDir();
+class CopyDir {
 
-function copyDir() {
+  init(path) {
 
-  fs.readdir(
-    filesPath,
-    (error, files) => {
+    fs.mkdir(
+      path,
+      {recursive: true},
+      this.isErrorMessage
+    );
   
-      isErrorMessage(error);
+  }
+
+  deleteFiles(sourceFiles, destination) {
+
+    fs.readdir(
+      destination,
+      (error, copyFiles) => {
+
+        if (copyFiles && copyFiles.length > 0) {
+
+          this.isErrorMessage(error);
+
+          let filesArray = copyFiles;
+
+          sourceFiles.forEach(file => {
+            filesArray = filesArray.filter(item => item !== file);
+          });
+
+          filesArray.forEach(file => {
+            fs.unlink(path.join(destination, file), this.isErrorMessage);
+          });
+
+        }
   
-      init();
+      }
+    );
   
-      deleteFiles(files);
+  }
+
+  copyFiles(source, destination) {
+
+    fs.readdir(
+      source,
+      (error, sourceFiles) => {
+    
+        this.isErrorMessage(error);
+    
+        this.init(destination);
+    
+        this.deleteFiles(sourceFiles, destination);
+    
+        sourceFiles.forEach(file => {
+          fs.copyFile(
+            path.join(source, file),
+            path.join(destination, file),
+            this.isErrorMessage
+          );
+        });
+    
+      }
+    );
   
-      files.forEach(file => {
-        fs.copyFile(
-          path.join(filesPath, file),
-          path.join(copyFilesPath, file),
-          isErrorMessage
-        );
-      })
-  
-      console.log('\nMagic!\n');
-  
-    }
-  );
+  }
+
+  isErrorMessage(error) {
+    if (error) return console.error(error.message);
+  }
 
 }
 
-function init() {
+const copyDir = new CopyDir();
 
-  fs.mkdir(
-    copyFilesPath,
-    {recursive: true},
-    isErrorMessage
-  );
-
-}
-
-function deleteFiles(files) {
-
-  fs.readdir(
-    copyFilesPath,
-    (error, copyFiles) => {
-
-      isErrorMessage(error);
-
-      let filesArray = copyFiles;
-
-      files.forEach(file => {
-        filesArray = filesArray.filter(item => item !== file);
-      });
-
-      filesArray.forEach(file => {
-        fs.unlink(path.join(copyFilesPath, file), isErrorMessage)
-      });
-
-    }
-  );
-
-}
-
-function isErrorMessage(error) {
-  if (error) return console.error(error.message);
-}
+copyDir.copyFiles(filesPath, copyFilesPath);

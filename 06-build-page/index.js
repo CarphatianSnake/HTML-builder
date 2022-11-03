@@ -32,7 +32,7 @@ function writeHTML() {
         )
   
         let componentData = '';
-
+        
         input.on('data', chunk => componentData += chunk);
         input.on('error', error => console.error(error.message));
         input.on('end', () => {
@@ -80,7 +80,7 @@ function writeStyles() {
   
       const dataArray = [];
   
-      filesArray.forEach((file, index) => {
+      filesArray.forEach((file, index, arr) => {
   
         const input = fs.createReadStream(
           path.join(stylesFolder, file),
@@ -95,7 +95,7 @@ function writeStyles() {
   
           dataArray.push(data);
   
-          if (filesArray.length - 1 === index) {
+          if (index === arr.length - 1) {
   
             const newData = dataArray.join('');
             const bundlePath = path.join(projectDistPath, 'style.css');
