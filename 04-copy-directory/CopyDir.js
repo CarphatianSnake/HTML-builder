@@ -27,15 +27,19 @@ module.exports = class CopyDir {
     const files = [];
     const folders = [];
 
-    folderMap.forEach(item => {
+    if (folderMap) {
 
-      if (item.isFile()) {
-        files.push(item.name);
-      } else {
-        folders.push(item.name);
-      }
+      folderMap.forEach(item => {
 
-    });
+        if (item.isFile()) {
+          files.push(item.name);
+        } else {
+          folders.push(item.name);
+        }
+  
+      });
+      
+    }
 
     return { files, folders };
 
