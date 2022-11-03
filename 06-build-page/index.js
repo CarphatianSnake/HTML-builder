@@ -64,7 +64,3 @@ function writeHTML() {
   );
 
 }
-
-function isErrorMessage(error) {
-  if (error) return console.error('Error:\n', error.message);
-}
