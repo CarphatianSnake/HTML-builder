@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
+const mergeStyles = require(path.join(__dirname, '../05-merge-styles/mergeStyles'));
 const CopyDir = require(path.join(__dirname, '../04-copy-directory/CopyDir'));
 
 const cd = new CopyDir(__dirname, 'assets', path.join('project-dist', 'assets'));
@@ -12,7 +13,7 @@ const stylesFolder = path.join(__dirname, 'styles');
 
 init();
 writeHTML();
-writeStyles();
+mergeStyles(stylesFolder, projectDistPath, 'style.css');
 cd.copy();
 
 function writeHTML() {
@@ -57,66 +58,6 @@ function writeHTML() {
           })
       });
       
-    }
-  );
-
-}
-
-function writeStyles() {
-
-  fs.readdir(
-    stylesFolder,
-    {withFileTypes: true},
-    (error, files) => {
-  
-      isErrorMessage(error);
-  
-      const filesArray = [];
-  
-      files.forEach(file => {
-  
-        if (file.isFile() && path.extname(path.join(stylesFolder, file.name)) === '.css') {
-  
-          filesArray.push(file.name);
-  
-        }
-  
-      });
-  
-      const dataArray = [];
-  
-      filesArray.forEach((file, index, arr) => {
-  
-        const input = fs.createReadStream(
-          path.join(stylesFolder, file),
-          'utf-8'
-        );
-  
-        let data = '';
-  
-        input.on('data', chunk => data += chunk);
-        input.on('error', error => console.error(error.message));
-        input.on('end', () => {
-  
-          dataArray.push(data);
-  
-          if (index === arr.length - 1) {
-  
-            const newData = dataArray.join('');
-            const bundlePath = path.join(projectDistPath, 'style.css');
-  
-            fs.writeFile(
-              bundlePath,
-              newData,
-              isErrorMessage
-            );
-  
-          }
-  
-        });
-  
-      });
-  
     }
   );
 
