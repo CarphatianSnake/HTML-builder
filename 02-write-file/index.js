@@ -4,11 +4,6 @@ const { stdin, stdout } = process;
 
 const textFilePath = path.join(__dirname, 'text.txt');
 
-// Removing file when script launches with flag -d and stop script
-const deleteFlag = process.argv[2];
-if (deleteFlag === '-d') return removeFile();
-
-// Main script
 const output = fs.createWriteStream(textFilePath);
 
 init();
@@ -40,24 +35,12 @@ process.on("SIGINT", () => {
 
 process.on('exit', () => stdout.write('\nGood luck!'));
 
-// init function to create new empty file
 function init() {
   fs.writeFile(
     textFilePath,
     '',
     error => {
       if (error) return console.error(error.message);
-    }
-  );
-}
-
-// function for removing file when script launches with flag -d
-function removeFile() {
-  fs.unlink(
-    textFilePath,
-    error => {
-      if (error) return console.error(error.message);
-      console.log('File deleted');
     }
   );
 }
