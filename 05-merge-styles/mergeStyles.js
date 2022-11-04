@@ -1,67 +1,43 @@
 const path = require('path');
-const fs = require('fs');
+const fsPromises = require('fs/promises');
 
-module.exports = function mergeStyles(source, destination, resultName) {
+module.exports = async function merge(source, destination, resultName) {
 
-  fs.readdir(
-    source,
-    {withFileTypes: true},
-    (error, files) => {
-  
-      isErrorMessage(error);
-  
-      const filesArray = [];
-  
-      files.forEach(file => {
-  
-        if (file.isFile() && path.extname(path.join(source, file.name)) === '.css') {
-  
-          filesArray.push(file.name);
-  
+  try {
+
+    let files = await fsPromises.readdir(source, {withFileTypes: true});
+
+    files = files.filter(filename => filename.isFile() && path.extname(path.join(source, filename.name)) === '.css');
+
+    const data = [];
+
+    for (let i = 0; i < files.length; i++) {
+
+      const file = await fsPromises.readFile(
+        path.join(source, files[i].name),
+        {encoding: 'utf-8'}
+      );
+
+      data.push(file);
+
+      if (i === files.length - 1) {
+        
+        try {
+          await fsPromises.writeFile(
+            path.join(destination, resultName),
+            data,
+            {encoding: 'utf-8'}
+          );
+        } catch(error) {
+          console.error(error);
         }
-  
-      });
-  
-      const dataArray = [];
-  
-      filesArray.forEach((file, index) => {
-  
-        const input = fs.createReadStream(
-          path.join(source, file),
-          'utf-8'
-        );
-  
-        let data = '';
-  
-        input.on('data', chunk => data += chunk);
-        input.on('error', error => console.error(error.message));
-        input.on('end', () => {
-  
-          dataArray.push(data);
-  
-          if (filesArray.length - 1 === index) {
-  
-            const newData = dataArray.join('');
-            const bundlePath = path.join(destination, resultName);
-  
-            fs.writeFile(
-              bundlePath,
-              newData,
-              isErrorMessage
-            );
-  
-          }
-  
-        });
-  
-      });
-  
-  
-    }
-  );
+        
+      }
 
-}
-  
-function isErrorMessage(error) {
-  if (error) return console.error(error.message);
+    }
+
+  } catch(error) {
+    console.error(error);
+  }
+
 }
