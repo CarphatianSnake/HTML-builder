@@ -18,7 +18,7 @@ module.exports = async function merge(source, destination, resultName) {
         {encoding: 'utf-8'}
       );
 
-      data.push(file);
+      data.push(`${file}\n`);
 
       if (i === files.length - 1) {
         

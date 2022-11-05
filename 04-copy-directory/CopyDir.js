@@ -45,7 +45,7 @@ module.exports = class CopyDir {
 
   }
 
-  delete(sourceMap, destination) {
+  delete(sourceMap, sourceFolders, destination) {
 
     fs.readdir(
       destination,
@@ -74,8 +74,9 @@ module.exports = class CopyDir {
 
           let foldersArray = folders;
 
-          sourceMap.forEach(folder => {
+          sourceFolders.forEach(folder => {
             foldersArray = foldersArray.filter(item => item !== folder);
+            
           })
 
           foldersArray.forEach(folder => {
@@ -102,7 +103,7 @@ module.exports = class CopyDir {
     
         this.init(destination);
     
-        this.delete(files, destination);
+        this.delete(files, folders, destination);
     
         files.forEach(file => {
           fs.copyFile(
