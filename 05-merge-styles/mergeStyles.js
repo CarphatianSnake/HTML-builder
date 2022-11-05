@@ -12,9 +12,9 @@ module.exports = async function merge(source, destination, resultName) {
       const isCSS = path.extname(path.join(
         source,
         filename.name
-      ));
+      )) === '.css';
 
-      return filename.isFile() && isCSS === '.css';
+      return filename.isFile() && isCSS;
 
   });
 
