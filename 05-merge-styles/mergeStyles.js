@@ -7,7 +7,16 @@ module.exports = async function merge(source, destination, resultName) {
 
     let files = await fsPromises.readdir(source, {withFileTypes: true});
 
-    files = files.filter(filename => filename.isFile() && path.extname(path.join(source, filename.name)) === '.css');
+    files = files.filter(filename => {
+
+      const isCSS = path.extname(path.join(
+        source,
+        filename.name
+      ));
+
+      return filename.isFile() && isCSS === '.css';
+
+  });
 
     const data = [];
 
