@@ -5,7 +5,7 @@ const indexHTML = path.join(__dirname, 'project-dist', 'index.html');
 const componentsPath = path.join(__dirname, 'components');
 const templatePath = path.join(__dirname, 'template.html');
 
-module.exports = async function gengerateHTML() {
+module.exports = async function generateHTML() {
 
   try {
 
