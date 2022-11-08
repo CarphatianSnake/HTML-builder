@@ -102,10 +102,9 @@ async function mergeStyles(source, destination, resultName) {
 }
 
 class CopyDir {
-  constructor(dirname, source, destination) {
-    this.dirname = dirname;
-    this.source = path.join(dirname, source);
-    this.destination = path.join(dirname, destination);
+  constructor(source, destination) {
+    this.source = path.join(__dirname, source);
+    this.destination = path.join(__dirname, destination);
     this.readdirOptions = {
       encoding: 'utf-8',
       withFileTypes: true
@@ -233,7 +232,7 @@ class CopyDir {
 
 }
 
-const cd = new CopyDir(__dirname, 'assets', path.join('project-dist', 'assets'));
+const cd = new CopyDir('assets', path.join('project-dist', 'assets'));
 
 cd.init(projectDistPath);
 generateHTML();
