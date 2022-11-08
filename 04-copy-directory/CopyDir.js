@@ -3,7 +3,6 @@ const fs = require('fs');
 
 module.exports = class CopyDir {
   constructor(source, destination) {
-    this.dirname = dirname;
     this.source = path.join(__dirname, source);
     this.destination = path.join(__dirname, destination);
     this.readdirOptions = {
